@@ -9,17 +9,18 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.SecurityFilterChain;
 @Configuration
-@EnableWebSecurity
-public class SecurityConfigurer extends WebSecurityConfigurerAdapter {
+
+public class SecurityConfigurer  {
 	@Value("${app.security.enable:true}")
 	boolean securityEnable;
 	@Bean
 	PasswordEncoder getPasswordEncoder() {
 		return new BCryptPasswordEncoder();
 	}
-	@Override
-	protected void configure(HttpSecurity http) throws Exception {
+	@Bean
+	public SecurityFilterChain configure(HttpSecurity http) throws Exception  {
 		http.httpBasic();
 		http.cors().and().csrf().disable();
 		if (securityEnable) {
@@ -29,6 +30,7 @@ public class SecurityConfigurer extends WebSecurityConfigurerAdapter {
 		} else {
 			http.authorizeHttpRequests().anyRequest().permitAll();
 		}
+		return http.build();
 	}
 
 }
